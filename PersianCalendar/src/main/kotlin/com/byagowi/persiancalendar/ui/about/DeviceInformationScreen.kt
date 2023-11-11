@@ -24,6 +24,7 @@ import android.text.style.ClickableSpan
 import android.util.AttributeSet
 import android.view.InputDevice
 import android.view.MenuItem
+import android.view.RoundedCorner
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
@@ -362,6 +363,20 @@ private class DeviceInformationAdapter(private val activity: FragmentActivity) :
                     "Safe Inset Left" to cutout.safeInsetLeft,
                     "Rects" to cutout.boundingRects.joinToString(",")
                 ).joinToString("\n") { (key, value) -> "$key: $value" }
+            } else "None"
+        ),
+        Item(
+            "Display Rounded Corners", if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) run {
+                val insets = activity.window?.decorView?.rootWindowInsets ?: return@run "None"
+                listOf(
+                    "Top Left Corner" to RoundedCorner.POSITION_TOP_LEFT,
+                    "Top Right Corner" to RoundedCorner.POSITION_TOP_RIGHT,
+                    "Bottom Right Corner" to RoundedCorner.POSITION_BOTTOM_RIGHT,
+                    "Bottom Left Corner" to RoundedCorner.POSITION_BOTTOM_LEFT,
+                ).joinToString("\n") { (title, id) ->
+                    val corner = insets.getRoundedCorner(id) ?: return@joinToString "$title: null"
+                    "$title: radius=${corner.radius} center=${corner.center}"
+                }
             } else "None"
         ),
         Item(
